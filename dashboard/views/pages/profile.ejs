@@ -1,0 +1,17 @@
+<%- include('../partials/head') %>
+<div class="card" style="max-width:520px">
+  <div class="server">
+    <img src="<%= user.avatarUrl %>" alt="" width="52" height="52" style="border-radius:50%">
+    <div class="info">
+      <strong><%= user.displayName %></strong>
+      <span class="muted small">@<%= user.username %> · <code><%= user.id %></code></span>
+    </div>
+  </div>
+  <div class="field" style="margin-top:14px"><span>Manageable servers</span><strong><%= guildCount %></strong></div>
+  <div class="field"><span>Role</span><span class="badge"><%= isBotOwner ? 'Bot owner' : 'Server manager' %></span></div>
+  <form method="post" action="/logout" style="margin-top:14px">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button class="btn danger" type="submit">Log out</button>
+  </form>
+</div>
+<%- include('../partials/foot') %>

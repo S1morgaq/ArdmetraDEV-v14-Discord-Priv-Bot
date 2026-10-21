@@ -1,0 +1,51 @@
+<%- include('../partials/head') %>
+<div id="page" data-guild="<%= info.id %>">
+<%- include('../partials/guildHead', { heading: 'Role panels' }) %>
+<% var lock = guildCtx.trusted ? '' : 'disabled'; %>
+<p class="muted">Members press a button to get or drop a role. Roles with admin or moderation permissions, managed roles and roles above the bot cannot be used.</p>
+
+<div class="grid cols-2">
+  <div class="card">
+    <div class="card-head"><h2>New panel</h2></div>
+    <form id="panel-form">
+      <div class="field"><label class="name">Channel</label>
+        <select name="channelId" required <%= lock %>>
+          <% channels.forEach(function (c) { %><option value="<%= c.id %>">#<%= c.name %></option><% }) %>
+        </select>
+      </div>
+      <div class="field"><label class="name">Title</label><input type="text" name="title" maxlength="100" required <%= lock %>></div>
+      <div class="row" style="margin-top:8px"><label class="name">Description</label>
+        <textarea name="description" rows="2" maxlength="500" style="width:100%" <%= lock %>></textarea>
+      </div>
+      <div class="row" style="margin-top:8px"><label class="name">Roles (max <%= maxRoles %>, Ctrl/Cmd-click for several)</label>
+        <select name="roleIds" multiple size="8" style="width:100%" required <%= lock %>>
+          <% roles.forEach(function (r) { %><option value="<%= r.id %>"><%= r.name %></option><% }) %>
+        </select>
+      </div>
+      <% if (!guildCtx.trusted) { %><p class="muted small">Only owners and whitelisted users can create panels.</p><% } %>
+      <div style="margin-top:12px"><button class="btn primary" type="submit" <%= lock %>>Post panel</button></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Active panels</h2></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Title</th><th>Roles</th><th></th></tr></thead>
+        <tbody>
+          <% if (panels.length === 0) { %><tr><td colspan="3" class="muted">No panels yet.</td></tr><% } %>
+          <% panels.forEach(function (p) { %>
+            <tr>
+              <td><%= p.title %><div class="muted small">#<%= (channels.find(function (c) { return c.id === p.channelId; }) || { name: 'deleted-channel' }).name %></div></td>
+              <td class="small"><%= p.roles.map(function (r) { return r.label; }).join(', ') %></td>
+              <td><button class="btn small danger" type="button" data-panel-delete="<%= p.messageId %>" <%= lock %>>Delete</button></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+<script src="/static/js/rolepanels.js"></script>
+<%- include('../partials/foot') %>

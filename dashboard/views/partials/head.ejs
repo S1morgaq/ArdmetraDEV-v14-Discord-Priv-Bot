@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <meta name="color-scheme" content="dark">
+  <title><%= title %> · Priv Bot</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></symbol>
+  <symbol id="i-server" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="8" rx="2"/><rect x="2" y="13" width="20" height="8" rx="2"/><path d="M6 7h.01M6 17h.01"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v9H5v-9M7.5 8a2.5 2.5 0 1 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 1 1 0 5"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9zM7.5 7.5h.01"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+</svg>
+<% if (locals.bare) { %>
+<main class="login-wrap">
+<% } else { %>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="logo"><svg class="i"><use href="#i-shield"/></svg></span><span>Priv Bot</span></div>
+    <nav class="nav">
+      <div class="nav-title">General</div>
+      <a href="/dashboard" class="<%= locals.active === 'dashboard' ? 'active' : '' %>"><svg class="i"><use href="#i-home"/></svg>Dashboard</a>
+      <a href="/servers" class="<%= locals.active === 'servers' ? 'active' : '' %>"><svg class="i"><use href="#i-server"/></svg>Servers</a>
+      <a href="/profile" class="<%= locals.active === 'profile' ? 'active' : '' %>"><svg class="i"><use href="#i-user"/></svg>Profile</a>
+      <% if (locals.isBotOwner) { %><a href="/license" class="<%= locals.active === 'license' ? 'active' : '' %>"><svg class="i"><use href="#i-key"/></svg>License</a><% } %>
+      <% if (locals.info) { %>
+        <div class="nav-title"><%= info.name %></div>
+        <a href="/servers/<%= info.id %>" class="<%= active === 'overview' ? 'active' : '' %>"><svg class="i"><use href="#i-grid"/></svg>Overview</a>
+        <a href="/servers/<%= info.id %>/protection" class="<%= active === 'protection' ? 'active' : '' %>"><svg class="i"><use href="#i-shield"/></svg>Protection</a>
+        <a href="/servers/<%= info.id %>/moderation" class="<%= active === 'moderation' ? 'active' : '' %>"><svg class="i"><use href="#i-ban"/></svg>Moderation</a>
+        <a href="/servers/<%= info.id %>/giveaways" class="<%= active === 'giveaways' ? 'active' : '' %>"><svg class="i"><use href="#i-gift"/></svg>Giveaways</a>
+        <a href="/servers/<%= info.id %>/welcome" class="<%= active === 'welcome' ? 'active' : '' %>"><svg class="i"><use href="#i-smile"/></svg>Welcome</a>
+        <a href="/servers/<%= info.id %>/rolepanels" class="<%= active === 'rolepanels' ? 'active' : '' %>"><svg class="i"><use href="#i-tag"/></svg>Role panels</a>
+        <a href="/servers/<%= info.id %>/register" class="<%= active === 'register' ? 'active' : '' %>"><svg class="i"><use href="#i-user"/></svg>Register</a>
+        <a href="/servers/<%= info.id %>/tag" class="<%= active === 'tag' ? 'active' : '' %>"><svg class="i"><use href="#i-key"/></svg>Tag</a>
+        <a href="/servers/<%= info.id %>/control" class="<%= active === 'control' ? 'active' : '' %>"><svg class="i"><use href="#i-sliders"/></svg>Control</a>
+        <a href="/servers/<%= info.id %>/logs" class="<%= active === 'logs' ? 'active' : '' %>"><svg class="i"><use href="#i-list"/></svg>Logs</a>
+      <% } %>
+    </nav>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button class="btn small menu-btn" data-menu type="button" aria-label="Menu"><svg class="i"><use href="#i-menu"/></svg></button>
+      <strong><%= title %></strong>
+      <span class="spacer"></span>
+      <% if (user) { %>
+      <div class="user-chip">
+        <img src="<%= user.avatarUrl %>" alt="" width="28" height="28">
+        <span class="name"><%= user.displayName %></span>
+        <form method="post" action="/logout">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="btn small" type="submit">Log out</button>
+        </form>
+      </div>
+      <% } %>
+    </header>
+    <main class="content">
+<% } %>

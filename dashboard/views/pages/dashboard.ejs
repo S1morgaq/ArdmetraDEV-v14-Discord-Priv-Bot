@@ -1,0 +1,40 @@
+<%- include('../partials/head') %>
+<div class="page-head">
+  <div>
+    <h1>Welcome back, <%= user.displayName %></h1>
+    <div class="muted">Live overview of the bot.</div>
+  </div>
+  <div class="actions">
+    <span class="badge <%= health.status === 'ok' ? 'ok' : 'bad' %>"><%= health.status === 'ok' ? 'All systems operational' : 'Degraded' %></span>
+  </div>
+</div>
+
+<div class="grid cols-4">
+  <div class="card stat"><div class="value"><%= stats.guilds %></div><div class="label">Servers protected</div></div>
+  <div class="card stat"><div class="value"><%= stats.members.toLocaleString('en-US') %></div><div class="label">Members watched</div></div>
+  <div class="card stat"><div class="value"><%= stats.ping %> ms</div><div class="label">Gateway latency</div></div>
+  <div class="card stat"><div class="value"><span data-uptime="<%= stats.uptime %>"></span></div><div class="label">Uptime</div></div>
+</div>
+
+<div class="grid cols-2" style="margin-top:16px">
+  <div class="card">
+    <div class="card-head"><h2>Health</h2></div>
+    <div class="field"><span>Discord</span><span class="badge <%= health.discord ? 'ok' : 'bad' %>"><%= health.discord ? 'connected' : 'down' %></span></div>
+    <div class="field"><span>Database</span><span class="badge <%= health.database ? 'ok' : 'bad' %>"><%= health.database ? 'connected' : 'down' %></span></div>
+    <div class="field"><span>License</span><span class="badge <%= health.license ? 'ok' : 'bad' %>"><%= health.license ? 'valid' : 'invalid' %></span></div>
+    <div class="field"><span>Memory</span><span><%= stats.memoryMb %> MB</span></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Your servers</h2><a class="small" style="margin-left:auto" href="/servers">View all</a></div>
+    <% if (guilds.length === 0) { %>
+      <p class="muted">The bot is not in any server you manage yet.</p>
+    <% } %>
+    <% guilds.forEach(function (g) { %>
+      <div class="field">
+        <span class="server"><% if (g.iconUrl) { %><img src="<%= g.iconUrl %>" alt="" width="52" height="52" style="width:32px;height:32px;border-radius:10px"><% } %> <%= g.name %></span>
+        <a class="btn small" href="/servers/<%= g.id %>">Manage</a>
+      </div>
+    <% }) %>
+  </div>
+</div>
+<%- include('../partials/foot') %>

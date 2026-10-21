@@ -1,0 +1,93 @@
+<%- include('../partials/head') %>
+<div id="page" data-guild="<%= info.id %>">
+<%- include('../partials/guildHead', { heading: 'Control' }) %>
+<p class="muted">Actions run as <strong>you</strong>: you need the matching Discord permission and the usual role hierarchy rules apply. Everything is recorded in the case list and the log channel.</p>
+
+<div class="grid cols-2">
+  <div class="card">
+    <div class="card-head"><h2>Moderate a member</h2></div>
+    <form data-endpoint="actions/moderate">
+      <div class="field"><label class="name">Action</label>
+        <select name="action" id="mod-action">
+          <option value="warn">Warn</option><option value="timeout">Timeout</option><option value="untimeout">Remove timeout</option>
+          <option value="kick">Kick</option><option value="ban">Ban</option><option value="unban">Unban</option>
+        </select>
+      </div>
+      <div class="field"><label class="name">User ID</label><input type="text" name="userId" inputmode="numeric" required placeholder="123456789012345678"></div>
+      <div class="field" data-show-for="timeout"><label class="name">Duration (minutes)</label><input type="number" name="durationMinutes" data-number min="1" max="40320" value="10"></div>
+      <div class="field" data-show-for="ban"><label class="name">Delete message days (0-7)</label><input type="number" name="deleteDays" data-number min="0" max="7" value="0"></div>
+      <div class="field"><label class="name">Reason</label><input type="text" name="reason" maxlength="500" placeholder="Optional"></div>
+      <div style="margin-top:12px"><button class="btn primary" type="submit">Run</button></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Send a message as the bot</h2></div>
+    <form data-endpoint="actions/message">
+      <div class="field"><label class="name">Channel</label>
+        <select name="channelId" required><% channels.forEach(function (c) { %><option value="<%= c.id %>">#<%= c.name %></option><% }) %></select>
+      </div>
+      <div class="field"><label class="name">Embed title</label><input type="text" name="title" maxlength="256"></div>
+      <div class="field"><label class="name">Embed color</label><input type="text" name="color" value="#7c5cff" maxlength="7"></div>
+      <div class="row" style="margin-top:8px"><label class="name">Embed description</label><textarea name="description" rows="3" maxlength="4000" class="wide" style="width:100%"></textarea></div>
+      <div class="row" style="margin-top:8px"><label class="name">Plain text (optional)</label><textarea name="content" rows="2" maxlength="2000" class="wide" style="width:100%"></textarea></div>
+      <p class="muted small">Mentions are never parsed, so this cannot be used to mass-ping.</p>
+      <button class="btn primary" type="submit">Send</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Channel tools</h2></div>
+    <form data-endpoint="actions/channel">
+      <div class="field"><label class="name">Channel</label>
+        <select name="channelId" required><% channels.forEach(function (c) { %><option value="<%= c.id %>">#<%= c.name %></option><% }) %></select>
+      </div>
+      <div class="field"><label class="name">Action</label>
+        <select name="action" id="channel-action"><option value="lock">Lock</option><option value="unlock">Unlock</option><option value="slowmode">Set slowmode</option></select>
+      </div>
+      <div class="field" data-show-for="slowmode" data-show-select="channel-action"><label class="name">Seconds (0 = off)</label><input type="number" name="seconds" data-number min="0" max="21600" value="0"></div>
+      <div style="margin-top:12px"><button class="btn primary" type="submit">Apply</button></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Voice</h2></div>
+    <p class="muted small" style="margin-top:0">
+      <% if (voice.channelId) { %>Connected to <strong>&#128266; <%= voice.channelName || 'a voice channel' %></strong>. The bot stays there and rejoins after a restart.<% } else { %>The bot is not in a voice channel.<% } %>
+    </p>
+    <form data-endpoint="actions/voice" data-reload>
+      <div class="field"><label class="name">Action</label>
+        <select name="action" id="voice-action"><option value="join">Join / move</option><option value="leave">Leave</option></select>
+      </div>
+      <div class="field" data-show-for="join"><label class="name">Voice channel</label>
+        <select name="channelId">
+          <% voiceChannels.forEach(function (c) { %><option value="<%= c.id %>" <%= voice.channelId === c.id ? 'selected' : '' %>><%= c.name %></option><% }) %>
+        </select>
+      </div>
+      <div class="field" data-show-for="join"><label class="name">Join deafened</label>
+        <select name="selfDeaf"><option value="true">Yes</option><option value="false">No</option></select>
+      </div>
+      <% if (!guildCtx.trusted) { %><p class="muted small">Only owners and whitelisted users can control voice.</p><% } %>
+      <div style="margin-top:12px"><button class="btn primary" type="submit" <%= guildCtx.trusted ? '' : 'disabled' %>>Apply</button></div>
+    </form>
+  </div>
+
+  <% if (isBotOwner) { %>
+  <div class="card">
+    <div class="card-head"><h2>Bot (owner only)</h2></div>
+    <form data-endpoint-abs="/api/bot/presence">
+      <div class="field"><label class="name">Status type</label>
+        <select name="type"><option>Watching</option><option>Playing</option><option>Listening</option><option>Competing</option></select>
+      </div>
+      <div class="field"><label class="name">Status text</label><input type="text" name="text" maxlength="128" required value="<%= tagline %>"></div>
+      <div style="margin-top:12px"><button class="btn primary" type="submit">Update status</button></div>
+    </form>
+    <hr style="border:0;border-top:1px solid var(--border);margin:16px 0">
+    <p class="muted small">Restart stops the bot cleanly (exit code 1). It only comes back automatically when running under PM2.</p>
+    <button class="btn danger" type="button" id="restart-bot">Restart bot</button>
+  </div>
+  <% } %>
+</div>
+</div>
+<script src="/static/js/control.js"></script>
+<%- include('../partials/foot') %>

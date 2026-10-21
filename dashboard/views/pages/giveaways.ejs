@@ -1,0 +1,50 @@
+<%- include('../partials/head') %>
+<div id="page" data-guild="<%= info.id %>">
+<%- include('../partials/guildHead', { heading: 'Giveaways' }) %>
+
+<div class="page-head">
+  <span class="muted">Giveaways are stored in MongoDB and resume automatically after a restart.</span>
+  <div class="actions"><button class="btn primary" type="button" data-open="giveaway-dialog">New giveaway</button></div>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Prize</th><th>Status</th><th>Participants</th><th>Winners</th><th>Ends</th><th></th></tr></thead>
+      <tbody>
+        <% if (giveaways.length === 0) { %><tr><td colspan="6" class="muted">No giveaways yet.</td></tr><% } %>
+        <% giveaways.forEach(function (g) { %>
+          <tr>
+            <td><%= g.prize %></td>
+            <td><span class="badge <%= g.ended ? '' : 'ok' %>"><%= g.ended ? 'ended' : 'active' %></span></td>
+            <td><%= g.participants.length %></td>
+            <td><%= g.ended ? (g.winners.length ? g.winners.join(', ') : '—') : g.winnerCount %></td>
+            <td class="muted small"><%= new Date(g.endsAt).toISOString().replace('T', ' ').slice(0, 16) %></td>
+            <td><button class="btn small danger" type="button" data-giveaway-delete="<%= String(g._id) %>">Delete</button></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<dialog id="giveaway-dialog">
+  <form id="giveaway-form">
+    <h2>New giveaway</h2>
+    <div class="row"><label>Prize</label><input type="text" name="prize" maxlength="200" required class="wide"></div>
+    <div class="row"><label>Channel</label>
+      <select name="channelId" class="wide" required>
+        <% channels.forEach(function (c) { %><option value="<%= c.id %>">#<%= c.name %></option><% }) %>
+      </select>
+    </div>
+    <div class="row"><label>Winners</label><input type="number" name="winnerCount" value="1" min="1" max="50" required style="width:100%;text-align:left"></div>
+    <div class="row"><label>Duration (minutes)</label><input type="number" name="durationMinutes" value="60" min="1" max="129600" required style="width:100%;text-align:left"></div>
+    <div class="buttons">
+      <button class="btn" type="button" data-close>Cancel</button>
+      <button class="btn primary" type="submit">Start</button>
+    </div>
+  </form>
+</dialog>
+</div>
+<script src="/static/js/giveaways.js"></script>
+<%- include('../partials/foot') %>

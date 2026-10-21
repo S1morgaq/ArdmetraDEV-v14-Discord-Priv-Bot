@@ -1,0 +1,33 @@
+<%- include('../partials/head') %>
+<div id="page" data-guild="<%= info.id %>">
+<%- include('../partials/guildHead', { heading: 'Tag system' }) %>
+<% var lock = guildCtx.trusted ? '' : 'disabled'; %>
+<p class="muted">Members who wear the tag in their nickname, display name or username get the role automatically, and lose it when they remove the tag. It is checked on join and whenever a name changes.</p>
+
+<div class="grid cols-2">
+  <div class="card">
+    <div class="card-head"><h2>Settings</h2></div>
+    <form id="tag-form">
+      <div class="field"><label class="name">Tag text</label><input type="text" name="text" maxlength="16" value="<%= tag ? tag.text : '' %>" placeholder="e.g. ✦ or S1m" <%= lock %>></div>
+      <div class="field"><label class="name">Role</label>
+        <select name="roleId" <%= lock %>>
+          <option value="">— off —</option>
+          <% roles.forEach(function (r) { %><option value="<%= r.id %>" <%= tag && tag.roleId === r.id ? 'selected' : '' %>><%= r.name %></option><% }) %>
+        </select>
+      </div>
+      <p class="muted small">Leave the tag or role empty to turn the system off. Roles with admin/moderation permissions cannot be used.</p>
+      <% if (!guildCtx.trusted) { %><p class="muted small">Only owners and whitelisted users can change these settings.</p><% } %>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn primary" type="submit" <%= lock %>>Save</button>
+        <button class="btn" type="button" id="scan" <%= (lock || !tag) ? 'disabled' : '' %>>Scan all members</button>
+      </div>
+    </form>
+  </div>
+  <div class="card stat">
+    <div class="value"><%= wearing %></div><div class="label">Members with the tag role</div>
+    <p class="muted small"><%= tag ? 'Active for "' + tag.text + '".' : 'The tag system is off.' %><%= scanning ? ' A scan is running.' : '' %></p>
+  </div>
+</div>
+</div>
+<script src="/static/js/tag.js"></script>
+<%- include('../partials/foot') %>

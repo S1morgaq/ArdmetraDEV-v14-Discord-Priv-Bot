@@ -1,0 +1,51 @@
+{
+  "name": "priv-bot",
+  "version": "1.0.0",
+  "description": "Production-grade Discord protection / moderation bot with web dashboard",
+  "main": "dist/index.js",
+  "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "pm2": "pm2 start ecosystem.config.js --env production",
+    "pm2:restart": "pm2 restart priv-bot",
+    "pm2:stop": "pm2 stop priv-bot",
+    "pm2:logs": "pm2 logs priv-bot",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "license:generate": "tsx scripts/generate-license.ts"
+  },
+  "dependencies": {
+    "@discordjs/voice": "^0.19.2",
+    "@napi-rs/canvas": "^1.0.9",
+    "connect-mongo": "^5.1.0",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
+    "express-session": "^1.18.1",
+    "gifenc": "^1.0.3",
+    "helmet": "^7.2.0",
+    "mongoose": "^8.8.0",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.14.0",
+    "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.0",
+    "@types/node": "^20.17.0",
+    "eslint": "^9.14.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.13.0"
+  }
+}

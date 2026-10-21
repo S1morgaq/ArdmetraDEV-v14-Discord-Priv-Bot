@@ -1,0 +1,55 @@
+<%- include('../partials/head') %>
+<div id="page" data-guild="<%= info.id %>">
+<%- include('../partials/guildHead', { heading: 'Register' }) %>
+<% var lock = guildCtx.trusted ? '' : 'disabled'; %>
+<p class="muted">The panel gets <strong>Erkek</strong> and <strong>Kız</strong> buttons. Pressing one gives the role, removes the unregistered role and posts "<em>@user kişisi aramıza katıldı</em>" in the chat channel (deleted after 10 seconds). In every channel the bot also answers "sa" with "Aleyküm selam hoşgeldin yavrum!" (deleted after 5 seconds).</p>
+
+<div class="grid cols-2">
+  <div class="card">
+    <div class="card-head"><h2>Settings</h2></div>
+    <form id="register-form">
+      <div class="field"><label class="name">Panel channel</label>
+        <select name="channelId" required <%= lock %>>
+          <% channels.forEach(function (c) { %><option value="<%= c.id %>" <%= cfg && cfg.channelId === c.id ? 'selected' : '' %>>#<%= c.name %></option><% }) %>
+        </select>
+      </div>
+      <div class="field"><label class="name">Chat channel</label>
+        <select name="chatChannelId" <%= lock %>>
+          <option value="">— same as panel —</option>
+          <% channels.forEach(function (c) { %><option value="<%= c.id %>" <%= cfg && cfg.chatChannelId === c.id ? 'selected' : '' %>>#<%= c.name %></option><% }) %>
+        </select>
+      </div>
+      <div class="field"><label class="name">Erkek role</label>
+        <select name="maleRoleId" required <%= lock %>>
+          <% roles.forEach(function (r) { %><option value="<%= r.id %>" <%= cfg && cfg.maleRoleId === r.id ? 'selected' : '' %>><%= r.name %></option><% }) %>
+        </select>
+      </div>
+      <div class="field"><label class="name">Kız role</label>
+        <select name="femaleRoleId" required <%= lock %>>
+          <% roles.forEach(function (r) { %><option value="<%= r.id %>" <%= cfg && cfg.femaleRoleId === r.id ? 'selected' : '' %>><%= r.name %></option><% }) %>
+        </select>
+      </div>
+      <div class="field"><label class="name">Unregistered role</label>
+        <select name="unregisteredRoleId" <%= lock %>>
+          <option value="">— none —</option>
+          <% roles.forEach(function (r) { %><option value="<%= r.id %>" <%= cfg && cfg.unregisteredRoleId === r.id ? 'selected' : '' %>><%= r.name %></option><% }) %>
+        </select>
+      </div>
+      <p class="muted small">Tip: set the unregistered role as the <a href="/servers/<%= info.id %>/welcome">welcome auto role</a> so every new member starts without access. Saving posts a fresh panel and removes the old one.</p>
+      <% if (!guildCtx.trusted) { %><p class="muted small">Only owners and whitelisted users can change these settings.</p><% } %>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn primary" type="submit" <%= lock %>>Save &amp; post panel</button>
+        <button class="btn danger" type="button" id="register-off" <%= (lock || !cfg) ? 'disabled' : '' %>>Turn off</button>
+      </div>
+    </form>
+  </div>
+  <div class="card stat">
+    <div class="value"><%= stats.male + stats.female %></div><div class="label">Registered members</div>
+    <div class="value" style="margin-top:12px"><%= stats.male %></div><div class="label">Erkek</div>
+    <div class="value" style="margin-top:12px"><%= stats.female %></div><div class="label">Kız</div>
+    <p class="muted small"><%= cfg ? 'Registration is active.' : 'Registration is off.' %></p>
+  </div>
+</div>
+</div>
+<script src="/static/js/register.js"></script>
+<%- include('../partials/foot') %>

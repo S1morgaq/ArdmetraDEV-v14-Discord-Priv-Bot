@@ -1,0 +1,10 @@
+<%- include('../partials/head', { bare: true }) %>
+<div class="card login-card">
+  <div class="logo"><svg class="i"><use href="#i-shield"/></svg></div>
+  <h1>Sign in to Priv Bot</h1>
+  <p class="muted">Use your Discord account. Access is limited to server owners, administrators and whitelisted members.</p>
+  <% if (error) { %><div class="notice"><%= error %></div><% } %>
+  <a class="btn primary" href="/auth/discord">Continue with Discord</a>
+  <p class="muted small" style="margin-top:22px"><%= tagline %></p>
+</div>
+<%- include('../partials/foot', { bare: true }) %>

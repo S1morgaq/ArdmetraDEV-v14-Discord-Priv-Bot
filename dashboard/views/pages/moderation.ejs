@@ -1,0 +1,52 @@
+<%- include('../partials/head') %>
+<div id="page" data-guild="<%= info.id %>">
+<%- include('../partials/guildHead', { heading: 'Moderation' }) %>
+
+<div class="grid cols-2">
+  <div class="card">
+    <div class="card-head"><h2>Log channel</h2></div>
+    <p class="muted small" style="margin-top:0">Protection, moderation and giveaway events are posted here as embeds.</p>
+    <div class="field">
+      <select id="log-channel" class="wide" <%= guildCtx.trusted ? '' : 'disabled' %>>
+        <option value="">— disabled —</option>
+        <% channels.forEach(function (c) { %><option value="<%= c.id %>" <%= settings.logChannelId === c.id ? 'selected' : '' %>>#<%= c.name %></option><% }) %>
+      </select>
+      <button class="btn primary" id="save-log-channel" type="button" <%= guildCtx.trusted ? '' : 'disabled' %>>Save</button>
+    </div>
+  </div>
+  <div class="card stat">
+    <div class="value"><%= cases.total %></div><div class="label">Moderation cases</div>
+    <div class="value" style="margin-top:12px"><%= warnings %></div><div class="label">Warnings issued</div>
+    <p class="muted small">Use the slash commands <code>/ban /kick /timeout /warn /clear /lock /slowmode /role</code> to moderate.</p>
+  </div>
+</div>
+
+<div class="card" style="margin-top:16px">
+  <div class="card-head"><h2>Cases</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Type</th><th>User</th><th>Moderator</th><th>Reason</th><th>Date</th></tr></thead>
+      <tbody>
+        <% if (cases.items.length === 0) { %><tr><td colspan="6" class="muted">No cases yet.</td></tr><% } %>
+        <% cases.items.forEach(function (c) { %>
+          <tr>
+            <td><%= c.caseId %></td>
+            <td><span class="badge warn"><%= c.type %></span></td>
+            <td><%= c.userId ? c.userId : '—' %></td>
+            <td><%= c.moderatorId %></td>
+            <td><%= c.reason %></td>
+            <td class="muted small"><%= new Date(c.createdAt).toISOString().replace('T', ' ').slice(0, 16) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <div class="pager">
+    <% if (cases.page > 1) { %><a class="btn small" href="?page=<%= cases.page - 1 %>">← Prev</a><% } %>
+    <span class="muted small">Page <%= cases.page %> / <%= cases.pages %></span>
+    <% if (cases.page < cases.pages) { %><a class="btn small" href="?page=<%= cases.page + 1 %>">Next →</a><% } %>
+  </div>
+</div>
+</div>
+<script src="/static/js/moderation.js"></script>
+<%- include('../partials/foot') %>

@@ -1,0 +1,76 @@
+<%- include('../partials/head') %>
+<div id="page" data-guild="<%= info.id %>">
+<%- include('../partials/guildHead', { heading: 'Protection' }) %>
+
+<% const canEdit = guildCtx.trusted; %>
+<% if (!canEdit) { %>
+  <div class="notice">Read-only: only the server owner and whitelisted users can change protection settings.</div>
+<% } %>
+
+<div class="page-head">
+  <span class="muted">Changes apply instantly: the bot reloads the configuration as soon as it is saved.</span>
+  <div class="actions"><button class="btn primary" id="save-protection" type="button" <%= canEdit ? '' : 'disabled' %>>Save changes</button></div>
+</div>
+
+<div class="grid cols-2">
+  <% sections.forEach(function (section) { const values = protection[section.key]; %>
+    <div class="card">
+      <div class="card-head"><h2><%= section.title %></h2></div>
+      <p class="muted small" style="margin-top:0"><%= section.description %></p>
+      <% section.fields.forEach(function (field) { const value = values[field.key]; %>
+        <div class="field">
+          <label class="name"><%= field.label %></label>
+          <span>
+          <% if (field.type === 'toggle') { %>
+            <label class="toggle"><input type="checkbox" data-section="<%= section.key %>" data-key="<%= field.key %>" <%= value ? 'checked' : '' %> <%= canEdit ? '' : 'disabled' %>><span></span></label>
+          <% } else if (field.type === 'number') { const scale = field.scale || 1; %>
+            <input type="number" data-kind="number" data-scale="<%= scale %>" data-section="<%= section.key %>" data-key="<%= field.key %>" min="<%= field.min %>" max="<%= field.max %>" value="<%= value / scale %>" <%= canEdit ? '' : 'disabled' %>><% if (field.unit) { %><span class="unit"><%= field.unit %></span><% } %>
+          <% } else if (field.type === 'select') { %>
+            <select data-section="<%= section.key %>" data-key="<%= field.key %>" <%= canEdit ? '' : 'disabled' %>>
+              <% field.options.forEach(function (option) { %><option value="<%= option %>" <%= option === value ? 'selected' : '' %>><%= option %></option><% }) %>
+            </select>
+          <% } else { %>
+            <input type="text" data-kind="idlist" data-section="<%= section.key %>" data-key="<%= field.key %>" value="<%= value.join(', ') %>" <%= canEdit ? '' : 'disabled' %>>
+          <% } %>
+          </span>
+        </div>
+      <% }) %>
+    </div>
+  <% }) %>
+</div>
+
+<div class="card" style="margin-top:16px">
+  <div class="card-head"><h2>Whitelist</h2></div>
+  <p class="muted small" style="margin-top:0">Whitelisted users, bots and roles are ignored by every protection module. The server owner and this bot are always trusted.</p>
+  <% if (canEdit) { %>
+  <div class="field">
+    <span style="display:flex;gap:8px;flex-wrap:wrap;width:100%">
+      <select id="wl-type"><option value="user">User</option><option value="bot">Bot</option><option value="role">Role</option></select>
+      <input type="text" id="wl-id" placeholder="User / bot ID" inputmode="numeric" style="flex:1;min-width:180px">
+      <select id="wl-role" hidden style="flex:1;min-width:180px">
+        <% roles.forEach(function (r) { %><option value="<%= r.id %>"><%= r.name %></option><% }) %>
+      </select>
+      <button class="btn primary" id="wl-add" type="button">Add</button>
+    </span>
+  </div>
+  <% } %>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Type</th><th>Name</th><th>ID</th><th></th></tr></thead>
+      <tbody>
+        <% if (whitelist.length === 0) { %><tr><td colspan="4" class="muted">No entries.</td></tr><% } %>
+        <% whitelist.forEach(function (entry) { %>
+          <tr>
+            <td><span class="badge"><%= entry.type %></span></td>
+            <td><%= entry.label %></td>
+            <td><code><%= entry.targetId %></code></td>
+            <td><% if (canEdit) { %><button class="btn small danger" type="button" data-wl-remove="<%= entry.targetId %>">Remove</button><% } %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+<script src="/static/js/protection.js"></script>
+<%- include('../partials/foot') %>

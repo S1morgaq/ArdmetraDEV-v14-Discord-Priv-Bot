@@ -1,0 +1,23 @@
+<% if (locals.bare) { %>
+</main>
+<% } else { %>
+    </main>
+    <footer class="footer"><%= tagline %> · v<%= version %></footer>
+  </div>
+</div>
+<% } %>
+<div id="toasts" aria-live="polite"></div>
+<dialog id="confirm-dialog">
+  <form method="dialog">
+    <h3>Are you sure?</h3>
+    <p class="muted" data-message></p>
+    <div class="buttons">
+      <button class="btn" value="no">Cancel</button>
+      <button class="btn danger" value="yes">Confirm</button>
+    </div>
+  </form>
+</dialog>
+<script src="/static/js/app.js"></script>
+<% if (locals.script) { %><script src="/static/js/<%= script %>.js"></script><% } %>
+</body>
+</html>

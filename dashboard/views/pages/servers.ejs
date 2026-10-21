@@ -1,0 +1,25 @@
+<%- include('../partials/head') %>
+<div class="page-head">
+  <div><h1>Servers</h1><div class="muted">Dashboard access: server owner, whitelisted users and administrators.</div></div>
+  <div class="actions"><a class="btn primary" href="<%= invite %>" target="_blank" rel="noopener noreferrer">Invite bot</a></div>
+</div>
+<% if (guilds.length === 0) { %>
+  <div class="card"><p class="muted">No server available. You need to be the owner, an administrator or on the bot's whitelist of a server the bot is in.</p></div>
+<% } %>
+<div class="grid cols-3">
+  <% guilds.forEach(function (g) { %>
+    <div class="card server">
+      <% if (g.iconUrl) { %><img src="<%= g.iconUrl %>" alt="" width="52" height="52"><% } else { %><span class="ph"><%= g.name.slice(0, 1).toUpperCase() %></span><% } %>
+      <div class="info">
+        <strong><%= g.name %></strong>
+        <span class="badge <%= g.access ? 'ok' : 'warn' %>"><%= g.access ? 'Bot active' : 'Bot not added' %></span>
+      </div>
+      <% if (g.access) { %>
+        <a class="btn small primary" href="/servers/<%= g.id %>">Manage</a>
+      <% } else { %>
+        <a class="btn small" href="<%= invite %>&guild_id=<%= g.id %>&disable_guild_select=true" target="_blank" rel="noopener noreferrer">Invite</a>
+      <% } %>
+    </div>
+  <% }) %>
+</div>
+<%- include('../partials/foot') %>

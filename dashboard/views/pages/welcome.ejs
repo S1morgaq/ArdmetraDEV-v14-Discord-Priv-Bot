@@ -1,0 +1,52 @@
+<%- include('../partials/head') %>
+<div id="page" data-guild="<%= info.id %>">
+<%- include('../partials/guildHead', { heading: 'Welcome' }) %>
+<% var lock = guildCtx.trusted ? '' : 'disabled'; %>
+<p class="muted">Every new member gets an animated card in the welcome channel, and leavers get a goodbye card. Bots are skipped. Placeholders: <code>{user}</code> <code>{name}</code> <code>{server}</code> <code>{count}</code></p>
+
+<div class="grid cols-2">
+  <div class="card">
+    <div class="card-head"><h2>Settings</h2></div>
+    <form id="welcome-form">
+      <div class="field"><label class="name">Welcome channel</label>
+        <select name="channelId" <%= lock %>>
+          <option value="">— off —</option>
+          <% channels.forEach(function (c) { %><option value="<%= c.id %>" <%= welcome.channelId === c.id ? 'selected' : '' %>>#<%= c.name %></option><% }) %>
+        </select>
+      </div>
+      <div class="field"><label class="name">Goodbye channel</label>
+        <select name="goodbyeChannelId" <%= lock %>>
+          <option value="">— off —</option>
+          <% channels.forEach(function (c) { %><option value="<%= c.id %>" <%= welcome.goodbyeChannelId === c.id ? 'selected' : '' %>>#<%= c.name %></option><% }) %>
+        </select>
+      </div>
+      <div class="field"><label class="name">Auto role</label>
+        <select name="autoRoleId" <%= lock %>>
+          <option value="">— off —</option>
+          <% roles.forEach(function (r) { %><option value="<%= r.id %>" <%= welcome.autoRoleId === r.id ? 'selected' : '' %>><%= r.name %></option><% }) %>
+        </select>
+      </div>
+      <div class="row" style="margin-top:8px"><label class="name">Welcome text</label>
+        <textarea name="message" rows="2" maxlength="500" style="width:100%" placeholder="Welcome {user} to **{server}**! You are member #{count}." <%= lock %>><%= welcome.message || '' %></textarea>
+      </div>
+      <div class="row" style="margin-top:8px"><label class="name">Goodbye text</label>
+        <textarea name="goodbyeMessage" rows="2" maxlength="500" style="width:100%" placeholder="**{name}** left **{server}**. We are now {count} members." <%= lock %>><%= welcome.goodbyeMessage || '' %></textarea>
+      </div>
+      <% if (!guildCtx.trusted) { %><p class="muted small">Only owners and whitelisted users can change these settings.</p><% } %>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn primary" type="submit" <%= lock %>>Save</button>
+        <button class="btn" type="button" id="send-test" <%= lock %>>Send test card</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Preview</h2></div>
+    <p class="muted small" style="margin-top:0">Rendered live with your own avatar.</p>
+    <img id="preview-welcome" class="preview" src="/api/guilds/<%= info.id %>/welcome/preview?mode=welcome" alt="Welcome card preview" width="720" height="240">
+    <img id="preview-goodbye" class="preview" src="/api/guilds/<%= info.id %>/welcome/preview?mode=goodbye" alt="Goodbye card preview" width="720" height="240" style="margin-top:12px">
+  </div>
+</div>
+</div>
+<script src="/static/js/welcome.js"></script>
+<%- include('../partials/foot') %>

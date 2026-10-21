@@ -1,0 +1,37 @@
+<%- include('../partials/head') %>
+<%- include('../partials/guildHead', { heading: 'Overview' }) %>
+
+<% if (lockdown.active) { %>
+  <div class="notice">Raid lockdown is active until <strong><%= new Date(lockdown.until).toISOString().replace('T', ' ').slice(0, 16) %> UTC</strong>. Use <code>/antiraid unlock</code> to end it.</div>
+<% } %>
+<% if (!guildCtx.trusted) { %>
+  <div class="notice">You can view this server, but only the owner and whitelisted users can change protection settings.</div>
+<% } %>
+
+<div class="grid cols-4">
+  <div class="card stat"><div class="value"><%= info.memberCount %></div><div class="label">Members</div></div>
+  <div class="card stat"><div class="value"><%= info.channelCount %></div><div class="label">Channels</div></div>
+  <div class="card stat"><div class="value"><%= activeGiveaways %></div><div class="label">Active giveaways</div></div>
+  <div class="card stat"><div class="value"><%= warnings %></div><div class="label">Warnings issued</div></div>
+</div>
+
+<div class="grid cols-2" style="margin-top:16px">
+  <div class="card">
+    <div class="card-head"><h2>Protection status</h2><a class="small" style="margin-left:auto" href="/servers/<%= info.id %>/protection">Configure</a></div>
+    <% [['Role', protection.roleProtection.enabled], ['Channel', protection.channelProtection.enabled], ['Server', protection.serverProtection.enabled], ['Permission', protection.permissionProtection.enabled], ['Webhook', protection.webhookProtection.enabled], ['Bot', protection.botProtection.enabled], ['Anti-Nuke', protection.antiNuke.enabled], ['Anti-Raid', protection.antiRaid.enabled], ['Anti-Spam', protection.antiSpam.enabled]].forEach(function (row) { %>
+      <div class="field"><span><%= row[0] %></span><span class="badge <%= row[1] ? 'ok' : 'bad' %>"><%= row[1] ? 'ON' : 'OFF' %></span></div>
+    <% }) %>
+    <div class="field"><span>Log channel</span><span><%= settings.logChannelId ? '#' + settings.logChannelId : 'Not set' %></span></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Recent activity</h2><a class="small" style="margin-left:auto" href="/servers/<%= info.id %>/logs">All logs</a></div>
+    <% if (recentLogs.length === 0) { %><p class="muted">Nothing logged yet.</p><% } %>
+    <% recentLogs.forEach(function (l) { %>
+      <div class="field">
+        <span><span class="badge"><%= l.category %></span> <%= l.title %></span>
+        <span class="muted small"><%= new Date(l.createdAt).toISOString().replace('T', ' ').slice(5, 16) %></span>
+      </div>
+    <% }) %>
+  </div>
+</div>
+<%- include('../partials/foot') %>

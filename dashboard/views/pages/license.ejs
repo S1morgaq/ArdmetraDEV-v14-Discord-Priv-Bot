@@ -1,0 +1,12 @@
+<%- include('../partials/head') %>
+<div class="page-head"><div><h1>License</h1><div class="muted">The full key is never shown.</div></div></div>
+<div class="card" style="max-width:560px">
+  <div class="field"><span>Status</span><span class="badge <%= license.valid ? 'ok' : 'bad' %>"><%= license.valid ? 'Valid' : 'Invalid' %></span></div>
+  <div class="field"><span>Key</span><code><%= license.maskedKey %></code></div>
+  <div class="field"><span>Provider</span><span><%= license.provider %></span></div>
+  <div class="field"><span>Validated at</span><span><%= license.validatedAt ? new Date(license.validatedAt).toISOString().replace('T', ' ').slice(0, 19) + ' UTC' : '—' %></span></div>
+  <div class="field"><span>Expires</span><span><%= license.expiresAt ? new Date(license.expiresAt).toISOString().slice(0, 10) : 'Never' %></span></div>
+  <% if (license.owner) { %><div class="field"><span>Licensed to</span><span><%= license.owner %></span></div><% } %>
+  <div class="field"><span>Uptime</span><span data-uptime="<%= health.uptime %>"></span></div>
+</div>
+<%- include('../partials/foot') %>
